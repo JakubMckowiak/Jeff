@@ -13,9 +13,9 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 # Create your objects here.
 ev3 = EV3Brick()
 
-data = DataLog('s1', 's2', 's3', 's4', 'L', 'P')
+data = DataLog('s1', 's2', 's3', 's4', 'L', 'P', name = "Jeff_robi_skrrr", timestamp = True, append = True)
 
-SKRMAX = 100
+SKRMAX = 10
 MOC = 100
 
 motorP1 = Motor(Port.A)
@@ -29,17 +29,17 @@ sensor4 = ColorSensor(Port.S4)
 
 
 #max min sensor
-maxc1 = 97
+maxc1 = 98
 minc1 = 7
 
-maxc2 = 87
-minc2 = 5
+maxc2 = 89
+minc2 = 4
 
-maxc3 = 80
-minc3 = 5
+maxc3 = 78
+minc3 = 4
 
 minc4 = 87
-maxc4 = 4
+maxc4 = 3
 
 maxcL = (maxc1 + maxc3)
 maxcP = (maxc2 + maxc4)
@@ -57,7 +57,7 @@ def dataLoging(skret, moc):
     # Poniższa linika resetuje czas, tak aby program
     # mierzył odstępy czasowe
     # watch.reset()
-    data.log(sensor1.reflection(), sensor2.reflection(), sensor3.reflection(), sensor4.reflection(), moc + skret, moc - skret)
+    data.log(sensor1.reflection(), sensor2.reflection(), sensor3.reflection(), sensor4.reflection(), motorL1.speed(), motorP1.speed())
 
 def standard():
     
@@ -126,7 +126,7 @@ def wszystko():
 
     elif sensor3.reflection() < (maxc3 + minc3)/2 and sensor1.reflection() < (maxc1 + minc1)/2: #mode -2
 		# mode -2
-        while sensor4.reflection() < ((maxc4 + minc4)/2) and sensor4.reflection() < ((maxc1 + minc1)/2) and sensor2.reflection()< ((maxc2 + minc2)/2):
+        while sensor3.reflection() < ((maxc3 + minc3)/2) and sensor2.reflection() < ((maxc2 + minc2)/2) and sensor1.reflection()< ((maxc1 + minc1)/2):
 			
             if(SKR3 > -(((SKRMAX*(sensor3.reflection()-maxcL))/(minc3-maxcL)))):
                 SKR3 = -(((SKRMAX*(sensor3.reflection()-maxcL))/(minc3-maxcL)))
