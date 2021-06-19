@@ -13,9 +13,9 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 # Create your objects here.
 ev3 = EV3Brick()
 
-data = DataLog('s1', 's2', 's3', 's4', 'L', 'P', name = "Jeff_robi_skrrr", timestamp = True, append = True)
+data = DataLog('s1', 's2', 's3', 's4', 'L', 'P', name = "Jeff_robi_skrrr", timestamp = False, append = False)
 
-SKRMAX = 10
+SKRMAX = 100
 MOC = 100
 
 motorP1 = Motor(Port.A)
@@ -38,8 +38,8 @@ minc2 = 4
 maxc3 = 78
 minc3 = 4
 
-minc4 = 87
-maxc4 = 3
+maxc4 = 87
+minc4 = 3
 
 maxcL = (maxc1 + maxc3)
 maxcP = (maxc2 + maxc4)
@@ -52,7 +52,7 @@ SKR4 = 0
 mode = 0
 
 def dataLoging(skret, moc):
-    global data
+    global data, mode
     # czas = watch.time()
     # Poniższa linika resetuje czas, tak aby program
     # mierzył odstępy czasowe
@@ -62,7 +62,7 @@ def dataLoging(skret, moc):
 def standard():
     
     global maxc1, minc1, maxc2, minc2, maxc3, minc3, maxc4, minc4, maxcL, maxcP, SKRMAX, SKR1, SKR2, SKR3, SKR4
-    SKR1 = -(((SKRMAX*(sensor1.reflection()-maxcL))/(minc1-maxcP)))
+    SKR1 = -(((SKRMAX*(sensor1.reflection()-maxcL))/(minc1-maxcL)))
     SKR2 = ((SKRMAX*(sensor2.reflection()-maxcP))/(minc2-maxcP))
 
 def ustaw():
@@ -76,10 +76,10 @@ def ustaw():
     motorP2.run(MOC - SKR)
 
 def wszystko():
-    global maxc1, minc1, maxc2, minc2, maxc3, minc3, maxc4, minc4, maxcL, maxcP, SKRMAX, SKR1, SKR2, SKR3, SKR4
-    mode = 0
+    global  mode, maxc1, minc1, maxc2, minc2, maxc3, minc3, maxc4, minc4, maxcL, maxcP, SKRMAX, SKR1, SKR2, SKR3, SKR4, SKR
     if (sensor3.reflection() < ((maxc3 + minc3)/2)) and (sensor4.reflection() < ((maxc4 + minc4)/2)):
-        #mod 3
+        #mod 3 skrzyzowanie
+        mode = 3
         standard()
         SKR3 = -(((SKRMAX*(sensor3.reflection()-maxcL))/(minc3-maxcL)))
         SKR4 = ((SKRMAX*(sensor4.reflection()-maxcP))/(minc4-maxcP))
@@ -88,31 +88,33 @@ def wszystko():
 
     elif sensor3.reflection() < (maxc3 + minc3)/2:
         # mod -1
-		
+        mode = -1
         while sensor1.reflection() > (maxc1+minc1)/2:
             standard()
-            if(SKR3 > -(((SKRMAX*(sensor3.reflection()-maxcL))/(minc3-maxcL)))):
+            if(abs(SKR3) < ((SKRMAX*(sensor3.reflection()-maxcL))/(minc3-maxcL))):
                 SKR3 = -(((SKRMAX*(sensor3.reflection()-maxcL))/(minc3-maxcL)))
             SKR1 = -(((SKRMAX*((maxc1+minc1)/2-maxcL))/(minc1-maxcL)))
-            SKR = (SKR1 + SKR2 + SKR3 + SKR4)
+                        
+            SKR = (SKR1 + SKR3)
             ustaw()
-
         SKR3= 0
 
     elif sensor4.reflection() < (maxc4 + minc4)/2:
         # mode 1
-
+        mode = 1
         while sensor2.reflection() > (maxc2+minc2)/2:
             standard()
             if(SKR4 < ((SKRMAX*(sensor4.reflection()-maxcP))/(minc4-maxcP))):
                 SKR4  = ((SKRMAX*(sensor4.reflection()-maxcP))/(minc4-maxcP))
             SKR2 = ((SKRMAX*((maxc2+minc2)/2-maxcP))/(minc2-maxcP))
-            SKR = (SKR1 + SKR2 + SKR3 + SKR4)
+            
+            SKR = (SKR2 + SKR4)
             ustaw()
         SKR4 = 0
 
     elif sensor4.reflection() < (maxc4 + minc4)/2 and sensor2.reflection() < (maxc2 + minc2)/2:
         # mode 2
+        mode = 2
         while(sensor4.reflection()< ((maxc4 + minc4)/2) and sensor1.reflection()< ((maxc1 + minc1)/2) and sensor2.reflection()< ((maxc2 + minc2)/2)):
             if(SKR4 < ((SKRMAX*(sensor4.reflection()-maxcP))/(minc4-maxcP))):
                 SKR4 = ((SKRMAX*(sensor4.reflection()-maxcP))/(minc4-maxcP))
@@ -126,6 +128,7 @@ def wszystko():
 
     elif sensor3.reflection() < (maxc3 + minc3)/2 and sensor1.reflection() < (maxc1 + minc1)/2: #mode -2
 		# mode -2
+        mode = -2
         while sensor3.reflection() < ((maxc3 + minc3)/2) and sensor2.reflection() < ((maxc2 + minc2)/2) and sensor1.reflection()< ((maxc1 + minc1)/2):
 			
             if(SKR3 > -(((SKRMAX*(sensor3.reflection()-maxcL))/(minc3-maxcL)))):
@@ -143,6 +146,8 @@ def wszystko():
 
     else:
         standard()
+        # mode 0 prosto
+        mode = 0
         SKR3 = -(((SKRMAX*(sensor3.reflection()-maxcL))/(minc3-maxcL)))
         SKR4 = ((SKRMAX*(sensor4.reflection()-maxcP))/(minc4-maxcP))
         SKR = (SKR1 + SKR2 + SKR3 + SKR4)
