@@ -13,7 +13,7 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 # Create your objects here.
 ev3 = EV3Brick()
 
-data = DataLog('s1', 's2', 's3', 's4', 'L', 'P', name = "Jeff_robi_skrrr", timestamp = False, append = False)
+data = DataLog('s1,'+'s2,'+'s3,'+'s4,'+'L,'+'P' name = "Jeff_robi_skrrr", timestamp = False, append = False )
 
 SKRMAX = 100
 MOC = 100
@@ -29,17 +29,17 @@ sensor4 = ColorSensor(Port.S4)
 
 
 #max min sensor
-maxc1 = 98
-minc1 = 7
+maxc1 = 97
+minc1 = 6
 
-maxc2 = 89
+maxc2 = 87
 minc2 = 4
 
-maxc3 = 78
-minc3 = 4
+maxc3 = 73
+minc3 = 2
 
-maxc4 = 87
-minc4 = 3
+maxc4 = 86
+minc4 = 4
 
 maxcL = (maxc1 + maxc3)
 maxcP = (maxc2 + maxc4)
@@ -57,7 +57,7 @@ def dataLoging(skret, moc):
     # Poniższa linika resetuje czas, tak aby program
     # mierzył odstępy czasowe
     # watch.reset()
-    data.log(sensor1.reflection(), sensor2.reflection(), sensor3.reflection(), sensor4.reflection(), motorL1.speed(), motorP1.speed())
+    data.log(sensor1.reflection()+ ',' + sensor2.reflection()+ ',' + sensor3.reflection()+ ',' + sensor4.reflection()+ ',' + motorL1.speed()+ ',' + motorP1.speed())
 
 def standard():
     
